@@ -1,0 +1,45 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}Feed{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'CSS/news/noticias.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="page-container">
+        <div class="content-wrap">
+            <section class="noticias">
+                <div class="noticias-container">
+                    {% for noticia in noticias %}
+                        {% if noticia.visivel == True %}
+                            <div class="noticia-card">
+                                <a href="{% url 'noticia' noticia.id %}">
+                                    <img src="{{ noticia.capa_noticia.url }}" alt="Notícia {{ noticia.id }}">
+                                </a>
+                                <div class="noticia-card-content">
+                                    <h3>{{noticia.título}}</h3>
+                                    <p>Publicado em {{noticia.created}}</p>
+                                    <p>Criado por {{noticia.autor}}</p>
+                                    <a href="{% url 'noticia' noticia.id %}" class="noticia-leia">Leia mais</a>
+                                </div>
+                            </div>
+                            {% elif noticia.visivel == False and request.user.is_staff %}
+                            <div class="noticia-card">
+                                <a href="{% url 'noticia' noticia.id %}">
+                                    <img src="{% static 'media/' %}{{ noticia.capa_noticia }}" alt="Notícia {{ noticia.id }}">
+                                </a>
+                                <div class="noticia-card-content">
+                                    <h3>{{noticia.título}}</h3>
+                                    <p>Publicado em {{noticia.created}}</p>
+                                    <p>Criado por {{noticia.autor}}</p>
+                                    <a href="{% url 'noticia' noticia.id %}" class="noticia-leia">Leia mais</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor%} 
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

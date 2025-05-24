@@ -1,0 +1,111 @@
+
+ /* Container do Card */
+ .carde {
+	max-width: 1000px; /* Largura máxima em telas grandes */
+	width: 90%; /* Largura padrão em telas menores */
+	margin: 20px auto;
+	padding: 20px;
+	background-color: white;
+	border-radius: 20px;
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+	display: flex;
+	flex-direction: column;
+  }
+
+  @media (max-width: 767px) {
+	.carde {
+		
+	  width: 99%; /* Ocupa 100% da largura */
+	  max-width: 99%; /* Remove a largura máxima */
+	  padding: 0 10px; /* Adiciona um espaçamento lateral */
+	}
+  }
+
+  @media (min-width: 768px) {
+	.carde {
+	  flex-direction: row !important;
+	  align-items: flex-start ;
+	}
+  }
+
+
+
+  /* Imagem do Card */
+  .card__image {
+	width: 100%;
+	max-height: 400px;
+	border-radius: 15px;
+	object-fit: cover;
+	margin-bottom: 20px;
+  }
+ 
+
+  @media (min-width: 768px) {
+	.card__image {
+	  width: 40% ;
+	  max-height: none;
+	  margin-bottom: 0;
+	  margin-right: 20px;
+	}
+  }
+
+  /* Conteúdo do Card */
+ 
+
+  .card__title {
+	font-size: 24px;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 10px;
+  }
+
+  .card__descricao {
+	font-size: 16px;
+	color: #555;
+	line-height: 1.5;
+	margin-bottom: 20px;
+  }
+
+  /* Botões */
+  .card__buttons {
+	display: flex;
+	gap: 10px;
+  }
+
+  .card__button {
+	padding: 10px 15px;
+	border-radius: 25px;
+	text-decoration: none;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+  }
+
+  .card__button--page {
+	background-color: #9147ff;
+	color: white;
+  }
+
+  .card__button--page:hover {
+	background-color: #7c3cc9;
+	transform: translateY(-2px);
+  }
+
+  .card__button--instagram {
+	background-color: #E1306C;
+	color: white;
+  }
+
+  .card__button--instagram:hover {
+	background-color: #C13584;
+	transform: translateY(-2px);
+  }
+
+  .card__button--instagram i {
+	font-size: 1.2em;
+  }

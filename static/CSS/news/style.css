@@ -1,0 +1,113 @@
+.entrada-container {
+    position: relative;
+    width: 100%; /* Ajuste para 100% de largura */
+    max-width: 1350px; /* Limita a largura máxima */
+    height: 550px;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin: 20px auto;
+  }
+  
+  .entrada-lg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    filter: brightness(50%);
+  }
+  
+  .entrada-logo {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 210px !important;
+    height: auto;
+    opacity: 0.9;
+  }
+  
+  .entrada-mensagem {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+  }
+  
+  /* Responsivo */
+  @media (max-width: 768px) {
+    .entrada-container {
+      height: 400px; 
+    }
+  
+    .entrada-logo {
+      width: 200px; /
+    }
+  
+    .entrada-mensagem {
+      margin-top: 20px;
+      font-size: 16px; 
+      top: 70%; 
+    }
+  }
+  
+  /* Responsivo para tablets e dispositivos de tela média */
+  @media (max-width: 1024px) {
+    .entrada-container {
+      height: 450px;
+    }
+  
+    .entrada-logo {
+      width: 240px; 
+    }
+  
+    .entrada-mensagem {
+      font-size: 17px; 
+      top: 68%; 
+    }
+  }
+  
+  
+  @media (min-width: 1600px) {
+    .entrada-container {
+      width: 1500px; 
+      height: 650px;
+    }
+  
+    .entrada-logo {
+      width: 350px; 
+    }
+  
+    .entrada-mensagem {
+      font-size: 20px;
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  /* Estilo para os títulos das seções */
+  .titulo-secao {
+    font-size: 2.5rem; 
+    font-weight: bold; 
+    color: #1a1a1a; /* Cor escura para maior contraste */
+    text-align: center;
+    margin-bottom: 2rem;
+    text-transform: uppercase; /* Deixa o título em maiúsculas */
+    letter-spacing: 2px; /* Espaçamento entre as letras */
+    position: relative;
+    padding-bottom: 10px;
+  }
+  
+  
+  

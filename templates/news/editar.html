@@ -1,0 +1,45 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}Editar notícias{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'CSS/news/editar.css' %}" />
+{% endblock %}
+
+
+{% block content %}
+    
+
+
+<div class="form-container">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {{ noticia_form.as_p }}
+    
+    <!-- Arquivos Existentes -->
+    <h3>Arquivos Existentes</h3>
+    {{ arquivos_formset.management_form }}
+    {% for form in arquivos_formset %}
+    <div class="arquivo-box">
+      {{ form.id }}
+      {{ form.arquivos.label_tag }} {{ form.arquivos }}
+      {{ form.nome.label_tag }} {{ form.nome }}
+      <label>
+        {{ form.DELETE }} Excluir
+      </label>
+    </div>
+    {% endfor %}
+    
+    <h3>Adicionar Novos Arquivos</h3>
+    <input type="file" name="novos_arquivos" multiple />
+    
+
+    <br>
+    <input class="btn btn-outline-success" type="submit" value="Salvar alterações" />
+      </form>
+    </div>
+    
+
+{% endblock %}

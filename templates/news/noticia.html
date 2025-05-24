@@ -1,0 +1,31 @@
+{% load static %}
+<section>
+
+  <div class="noticia">
+    {% if noticia.visivel == False and request.user.is_staff == True %}
+
+    <h3>{{aviso}}</h3>
+
+    {% endif %}
+
+    {% if request.user.is_staff == True %}
+    <div class="d-flex gap-2 mb-3">
+      <a href="{% url 'editar' noticia.id %}" class="btn btn-sm btn-warning">
+        <i class="fas fa-pen"></i> Editar
+      </a>
+      <a href="{% url 'excluir' noticia.id %}" class="btn btn-sm btn-danger">
+        <i class="fas fa-trash-alt"></i> Excluir
+      </a>
+    </div>
+    {% endif %}
+
+
+    <div class="h3">
+      <h3>{{noticia.título}}</h3>
+    </div>
+
+
+    <img src="{{ noticia.capa_noticia.url }}" alt="Capa da Notícia" class="capa">
+    <include src="{{ conteudo_html.url }}" class=""></include>
+  </div>
+</section>

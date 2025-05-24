@@ -1,0 +1,27 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}{{ usuario.username }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'CSS/users/perfil.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="content-wrap">
+    <div class="profile-container">
+      <img src="{{ foto_de_perfil.url }}" alt="Foto de Perfil" class="profile-avatar">
+
+      <div class="profile-username">@{{ usuario.username }}</div>
+      <p class="profile-bio">{{ perfil.bio|linebreaks }}</p>
+
+      {% if request.user.username == usuario.username or request.user.is_staff %}
+      <div class="edit-btn">
+        <a href="{% url 'editar_user' usuario.username %}" class="btn btn-success btn-rounded shadow">Editar Perfil</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% load static %}
+<style>
+    
+/*Rodape*/
+.footer {
+  background-color: #745dab;
+ 
+  padding: 20px 0;
+  text-align: center;
+  margin-top: 50px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+.direitoautoral:link {
+    color: #000000; /* Cor para links não visitados */
+    text-decoration: none;
+}
+.direitoautoral:visited {
+    color: #000000; /* Mesma cor para links visitados */
+    text-decoration: none;
+}
+.direitoautoral:hover {
+    color: #555555; /* Cor diferente ao passar o mouse, ex.: cinza */
+    text-decoration: underline; /* Adiciona sublinhado ao passar o mouse, se quiser */
+}
+.direitoautoral:active {
+    color: #000000; /* Cor ao clicar */
+    text-decoration: none;
+}
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.footer-image {
+  width: 250px;
+  height: auto;
+  margin: 0;
+}
+
+.footer-logo-jif {
+  width: 90px;
+  height: 90px;
+  margin: 0;
+}
+
+.footer hr {
+  margin: 20px auto;
+  border-color: #fff;
+  width: 80%;
+}
+
+.footer p {
+  margin-top: 20px;
+  font-size: 14px;
+  color:#fff;
+}
+
+/* Tornando o rodapé responsivo */
+@media (max-width: 768px) {
+  .footer{
+    margin-top: 200px;
+  }
+  .footer-container {
+ 
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-logo-jif {
+    display: none !important;
+  }
+
+  .footer-image {
+    width: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-image {
+    width: 200px;
+  }
+
+  .footer p {
+    font-size: 12px;
+  }
+}
+  
+</style>
+
+<footer class="footer">
+  </div>
+      <hr>
+    <div>
+        <p>
+        ©  Criado por <a class="direitoautoral" rel="noreferrer" target="_blank" href="https://github.com/SilasAndradev/">Silas Andrade</a> e <a class="direitoautoral" rel="noreferrer" target="_blank" href="https://github.com/Ghs-d/">Guilherme Henrique</a>
+        </p>
+    </div>
+</footer>

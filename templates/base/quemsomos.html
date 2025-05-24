@@ -1,0 +1,112 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}Quem Somos | JIFB{% endblock %}
+
+{% block extra_css %}
+<!-- Adicione isso no <head> do seu HTML -->
+<link rel="stylesheet" href="{% static 'CSS/base/quem-somos.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="entrada">
+  <div class="entrada-container">
+    <div class="entrada-part">
+      <img src="{% static 'img/LOGO_JIFB_SEM_FUNDO.png'%}" alt="Logo da Empresa" class="entrada-logo">
+    </div>
+    <div class="vertical-line">
+      <hr>
+    </div>
+    <div class="entrada-part">
+      <div class="entrada-mensagem">
+        <p>QUEM</p>
+        <p>SOMOS</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="quem-somos">
+  <div class="container-quem-somos">
+    <div class="imagem-qs">
+      <img src="{% static 'img/JIFB_direitora.jpg' %}" alt="Imagem dos pensantes do JIFB com Genilda">
+    </div>
+    <div class="texto-qs">
+      <h2>Quem Somos</h2>
+      <p>Somos o JIFB, o Jornal Escolar do IFBaiano – Campus Santa Inês. Criado por estudantes e para a comunidade
+        escolar, nosso objetivo é informar, expressar e conectar. Acreditamos no poder da comunicação como ferramenta
+        para fortalecer o conhecimento, estimular o pensamento crítico e valorizar as vozes do nosso campus.
+
+        Aqui, damos espaço para notícias, entrevistas, cultura, debates e tudo o que movimenta o dia a dia do IFBaiano.
+        Nosso compromisso é com a verdade, a criatividade e a participação ativa dos estudantes na construção de um
+        jornal que represente a todos.
+
+        Seja bem-vindo ao JIFB – a informação que nasce na escola e faz a diferença na comunidade!</p>
+    </div>
+  </div>
+</section>
+
+<section class="docs-section">
+  <div class="docs-container">
+
+    <div class="doc-card estatuto">
+      <h2>Estatuto do Jornal Estudantil</h2>
+      <p>
+        Conheça os princípios, diretrizes e a base que sustenta o JIFB-NEWS – um jornal ético, democrático e feito por
+        estudantes.
+      </p>
+      <a href="{% static 'files/estatuto.pdf' %}" target="_blank" class="btn-doc">
+        Baixar Estatuto em PDF
+      </a>
+    </div>
+
+
+
+    <div class="doc-card regularizacao">
+      <h2>Regularização do Jornal Estudantil</h2>
+      <p>
+        Leia sobre as normas e critérios que garantem a transparência e a continuidade do nosso projeto no IF Baiano –
+        Campus Santa Inês.
+      </p>
+      <a href="{% static 'files/regularizacao.pdf' %}" target="_blank" class="btn-doc">
+        Baixar Regularização em PDF
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="cts">
+
+  <hr class="linha-dev">
+  <section class="dev-section">
+    <h2>Equipe de Desenvolvimento</h2>
+    <!-- Card Back end -->
+    <div class="card back">
+      <img src="{% static 'img/JIFB_direitora.jpg' %}" alt="Silas" class="dev-img">
+      <div class="card-content">
+        <h3>Back-end</h3>
+        <p><strong>Silas de Almeida Andrade</strong></p>
+        <div class="icons">
+          <a href="https://github.com/SilasAndradev"><i class="fab fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/silasandradev/"><i class="fab fa-linkedin"></i></a>
+          <a href="https://www.instagram.com/silas3_/"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Front end -->
+    <div class="card front">
+      <img src="{% static 'img/JIFB_direitora.jpg' %}" alt="Guilherme" class="dev-img">
+      <div class="card-content">
+        <h3>Front-end</h3>
+        <p><strong>Guilherme Henrique Santana da Silva</strong></p>
+        <div class="icons">
+          <a href="https://github.com/Ghs-d"><i class="fab fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/guilherme-henrique-629862355/"><i class="fab fa-linkedin"></i></a>
+          <a href="https://www.instagram.com/guii.henrique/"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+  </section>
+  {% endblock %}

@@ -1,0 +1,46 @@
+{% extends "main.html" %}
+{% load static %}
+{% block title %}JIFB{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'CSS/base/noticias.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/base/eventos.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/base/style.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="entrada-container">
+        <img src="{% static 'img/entrada_IFBAIANO.jpg' %}" alt="Entrada do IF" class="entrada-lg">
+        <img src="{% static 'img/LOGO_JIFB_SEM_FUNDO.png'%}" alt="Logo do Jornal" class="entrada-logo">
+        <div class="entrada-mensagem">
+        <p>Bem-vindo ao Jornal IFBaiano! Informação com qualidade e compromisso.</p>
+        </div>
+    </div>
+    
+    <section class="noticias" id="noticias">
+        <div class="container-noticias">
+            <section class="noticias">
+                <div class="noticias-container">
+                    {% for noticia in noticias %}
+                        {% if noticia.visivel == True %}
+                            <div class="noticia-card">
+                                <a href="{% url 'noticia' noticia.id %}">
+                                    <img src="{{ noticia.capa_noticia.url }}" alt="Notícia {{ noticia.id }}">
+                                </a>
+                                <div class="noticia-card-content">
+                                    <h3>{{noticia.título}}</h3>
+                                    <p>Publicado em {{noticia.created}}</p>
+                                    <p>Criado por {{noticia.autor}}</p>
+                                    <a href="{% url 'noticia' noticia.id %}" class="noticia-leia">Leia mais</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor%} 
+                </div>
+            </section>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+{% endblock %}

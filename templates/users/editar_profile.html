@@ -1,0 +1,21 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}Editar perfil{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'CSS/users/editar-perfil.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="main-wrapper">
+    <div class="form-container">
+      <h2>Editar Perfil</h2>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ profile_form.as_p }}
+        <input class="btn btn-outline-success" type="submit" value="Enviar">
+      </form>
+    </div>
+  </div>
+{% endblock %}

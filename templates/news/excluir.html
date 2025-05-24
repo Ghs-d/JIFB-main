@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block title %}Excluir{% endblock %}
+
+{% block content %}
+  <div class="main-wrapper">
+    <div class="form-container">
+      <form enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+        <p>Você tem certeza que quer deletar <strong>"{{ obj }}"</strong>?</p>
+        <a href="{{ request.META.HTTP_REFERER }}">Voltar</a>
+        <input type="submit" value="Confirmar">
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'main.html' %}
+{% load static %} 
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'CSS/news/noticias.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="page-container">
+        <div class="content-wrap">
+            <section class="noticias">
+                <h4>Encontramos {{ número_de_notícia }} notícia(s)</h4>
+                <div class="noticias-container">
+                    {% if número_de_notícia == 0 %}
+                        <div class="noticia-card">
+                            <h3>Não encontramos nada</h3>
+                        </div>
+                    {% else %}
+                            {% for noticia in noticias %}
+                                {% if noticia.visivel == True %}
+                                <div class="noticia-card">
+                                    <a href="{% url 'noticia' noticia.id %}">
+                                        <img src="{{ noticia.capa_noticia.url }}" alt="Notícia {{ noticia.id }}">
+                                    </a>
+                                    <div class="noticia-card-content">
+                                        <h3>{{noticia.título}}</h3>
+                                        <p>Publicado em {{noticia.created}}</p>
+                                        <p>Criado por {{noticia.autor}}</p>
+                                        <a href="{% url 'noticia' noticia.id %}" class="noticia-leia">Leia mais</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor%}             
+                        {% endif %}
+                    </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

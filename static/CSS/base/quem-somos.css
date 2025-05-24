@@ -1,0 +1,405 @@
+
+.titulo-secao {
+    margin-top: 20px;
+    font-size: 2.5rem; 
+    font-weight: 500;
+ 
+    color: #1a1a1a; 
+    text-align: center;
+    margin-bottom: 2rem;
+    text-transform: uppercase; 
+    letter-spacing: 2px;
+    position: relative;
+    padding-bottom: 10px;
+  }
+
+/*Imagem Entrada */
+
+.entrada {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  background: black;
+  font-family: "Poppins", sans-serif;
+  color: white;
+  text-align: center;
+}
+.entrada-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 1300px;
+  height: auto;
+  background-color: #000000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  margin: 20px auto;
+  position: relative;
+  padding: 20px;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeIn 1s ease-in-out forwards;
+  flex-wrap: wrap;
+}
+@keyframes fadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(-20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+.entrada-part {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 250px;
+}
+.entrada-logo {
+  width: 200px;
+  height: auto;
+  opacity: 0.9;
+  animation: fadeIn 1.5s ease-in-out forwards;
+}
+.vertical-line {
+  width: 9px;
+  height: 200px;
+  background-color: #ffffff;
+  margin: 0 20px;
+  border-radius: 10px;
+  animation:  ease-in-out forwards 0.5s;
+}
+@keyframes grow {
+  from {
+      height: 0;
+  }
+  to {
+      height: 40%;
+  }
+}
+.entrada-mensagem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  animation: fadeIn 1.5s ease-in-out forwards 1s;
+}
+.entrada-mensagem p {
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  margin: 0;
+  line-height: 1.2;
+}
+.entrada-mensagem p:first-child {
+  margin-bottom: -10px;
+}
+.entrada-mensagem p:last-child {
+  margin-top: 20px;
+}
+@media (max-width: 768px) {
+  section{
+    height: 70vh;
+  }
+  .entrada-container {
+      flex-direction: column;
+      height: auto;
+      text-align: center;
+      padding: 20px;
+  }
+  .vertical-line {
+    width: 80%;
+    height: 6px;
+    background-color: #ffffff;
+    margin: 20px 0;
+    border-radius: 10px;
+    animation:  ease-in-out forwards 0.5s;
+  }
+  .entrada-logo {
+      width: 250px;
+  }
+  .entrada-mensagem p {
+      font-size: 30px;
+  }
+}
+
+
+/*Quem somos texto*/
+body{
+  background-color: #E6E6FA;
+}
+.quem-somos {
+  padding: 40px 20px;
+  
+}
+
+.container-quem-somos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 40px;
+}
+
+
+.imagem-qs {
+  flex: 1;
+}
+
+.imagem-qs img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.texto-qs {
+  flex: 1;
+}
+
+.texto-qs h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.texto-qs p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #555;
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+@media (max-width: 768px) {
+  .container-quem-somos {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .texto-qs h2 {
+    font-size: 2rem;
+  }
+  
+  .texto-qs p {
+    font-size: 1rem;
+  }
+}
+
+
+
+
+/*Documentos*/
+
+.docs-section {
+  padding: 40px 20px;
+ 
+}
+
+.docs-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 40px;
+}
+
+.doc-card {
+  background-color: #fff;
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.doc-card h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 15px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.doc-card p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 20px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.btn-doc {
+  display: inline-block;
+  padding: 10px 16px;
+  background-color: #e76d10;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-doc:hover {
+  background-color: #cf8b0a;
+}
+
+
+@media (max-width: 768px) {
+  .docs-container {
+      margin-top: 100px;
+      flex-direction: column;
+      gap: 20px;
+  }
+}
+
+
+
+/*Nós gui e silas*/
+ .linha-dev{
+  width: 100%;
+  height: 6px;
+  border-radius: 2px;
+  background-color: #000000;
+  margin-left: auto;
+  margin-right:auto ;
+ }
+
+.cts{
+  background-color: #f9f8f8;
+  border-bottom: 3px solid #673ab7;
+
+
+}
+
+ .dev-section {
+  max-width: 1000px;
+  margin: auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  background-color: #c9a7e1;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.card.back {
+  flex-direction: row;
+}
+
+.card.front {
+flex-direction: row-reverse;
+}
+
+.dev-img {
+  border-radius: 50%;
+  width: 180px;
+  height: 180px;
+  border: 3px solid #1a1a1a;
+  object-fit: cover;
+  margin: auto;
+}
+
+.card-content {
+  padding: 1.5rem;
+  flex: 1;
+  text-align: left;
+}
+
+.card-content h3 {
+  margin-top: 0;
+}
+
+.icons {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 10px;
+}
+
+.icons a {
+  font-size: 1.3rem;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.icons a:hover {
+  color: #0077b5;
+}
+
+
+@media (max-width: 700px) {
+  .linha-dev{
+    margin-top: 150px;
+  }
+  .card.horizontal,
+  .card.horizontal.reverse
+   {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .icons {
+    justify-content: center;
+  }
+
+  .card-content {
+    text-align: center;
+  }
+
+  .dev-img {
+    width: 70%;
+    height: auto;
+  }
+}
+
+/* Órgão Responsável Section */
+.orgao {
+  text-align: center;
+  background-color: #f9f8f8;
+  padding: 0.5rem;
+  border-radius: 1rem;
+  margin-top: 3rem;
+  
+}
+
+.orgao hr {
+  width: 60px;
+  margin: 0 auto 1.5rem auto;
+  border: none;
+  border-top: 3px solid #000000;
+  
+}
+
+.orgao h4 {
+  font-size: 1.6rem;
+  color: #040404;
+  margin-bottom: 1rem;
+}
+
+.logo-cts {
+  width: 100px;
+  height: auto;
+  margin: 1rem 0;
+}
+
+.orgao p {
+  font-size: 1rem;
+  color: #444;
+  margin: 0.5rem 0 0;
+}
