@@ -3,6 +3,7 @@
   width: 100%; /* Ajuste para 100% de largura */
   max-width: 1350px; /* Limita a largura máxima */
   height: 550px;
+  max-height: 800px;
   overflow: hidden;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
@@ -41,14 +42,48 @@
   text-align: center;
 }
 
+.form-pesquisa {
+  position: absolute;
+  top: 75%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 0.5rem;
+  width: 80%;
+  max-width: 600px;
+  z-index: 1;
+}
+
+.form-pesquisa input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: none;
+}
+
+.btn-pesquisar {
+  background-color: #5cd65c;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  white-space: nowrap;
+}
+
+.btn-pesquisar:hover {
+  background-color: #4CAF50;
+}
+
+
+
 /* Responsivo */
 @media (max-width: 768px) {
   .entrada-container {
-    height: 400px; 
+    height: 600px !important; 
   }
 
   .entrada-logo {
-    width: 200px; /
+    width: 200px; 
   }
 
   .entrada-mensagem {
@@ -56,9 +91,22 @@
     font-size: 16px; 
     top: 70%; 
   }
+    .form-pesquisa {
+    top: 88%;
+    width: 90%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-pesquisa input,
+  .btn-pesquisar {
+    width: 100%;
+    border-radius: 12px;
+    font-size: 0.95rem;
+  }
 }
 
-/* Responsivo para tablets e dispositivos de tela média */
+
 @media (max-width: 1024px) {
   .entrada-container {
     height: 450px;
@@ -88,27 +136,39 @@
   .entrada-mensagem {
     font-size: 20px;
   }
+  
+}
+
+
+@media(min-width: 480px) {
+
+  .form-pesquisa {
+    top: 90%;
+    gap: 0.3rem;
+  }
+
+  .form-pesquisa input,
+  .btn-pesquisar {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
 }
 
 
 
 
 
-
-
-/* Estilo para os títulos das seções */
 .titulo-secao {
   font-size: 2.5rem; 
   font-weight: bold; 
-  color: #1a1a1a; /* Cor escura para maior contraste */
+  color: #1a1a1a;
   text-align: center;
   margin-bottom: 2rem;
-  text-transform: uppercase; /* Deixa o título em maiúsculas */
-  letter-spacing: 2px; /* Espaçamento entre as letras */
+  text-transform: uppercase; 
+  letter-spacing: 2px; 
   position: relative;
   padding-bottom: 10px;
 }
-
 
 
 
