@@ -4,7 +4,7 @@
 {% block title %}Quem Somos | JIFB{% endblock %}
 
 {% block extra_css %}
-<!-- Adicione isso no <head> do seu HTML -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="{% static 'CSS/base/quem-somos.css' %}">
 {% endblock %}
 
@@ -82,31 +82,45 @@
   <hr class="linha-dev">
   <section class="dev-section">
     <h2>Equipe de Desenvolvimento</h2>
-    <!-- Card Back end -->
-    <div class="card back">
-      <img src="{% static 'img/JIFB_direitora.jpg' %}" alt="Silas" class="dev-img">
+        
+     <div class="card back">
       <div class="card-content">
-        <h3>Back-end</h3>
-        <p><strong>Silas de Almeida Andrade</strong></p>
+        <p class="sobre">Sou UI/UX designer do site Jornal-News, com psicologia aplicada ao design, e aluno do curso técnico de Informática integrado ao ensino médio.</p>
+        <p class="nome">Arthur Eugênio</p>
         <div class="icons">
-          <a href="https://github.com/SilasAndradev"><i class="fab fa-github"></i></a>
-          <a href="https://www.linkedin.com/in/silasandradev/"><i class="fab fa-linkedin"></i></a>
-          <a href="https://www.instagram.com/silas3_/"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.instagram.com/seu_perfil" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://github.com/seu_perfil" target="_blank"><i class="fab fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/seu_perfil" target="_blank"><i class="fab fa-linkedin"></i></a>
         </div>
       </div>
+      <img style="width: 100px; height: 100px; background-color: #000; border-radius: 50%; margin: 1.5rem;">
     </div>
 
-    <!-- Card Front end -->
     <div class="card front">
-      <img src="{% static 'img/JIFB_direitora.jpg' %}" alt="Guilherme" class="dev-img">
       <div class="card-content">
-        <h3>Front-end</h3>
-        <p><strong>Guilherme Henrique Santana da Silva</strong></p>
+        <p class="sobre">Responsável pelo design e desenvolvimento front-end do site Jornal-News. Estudante do curso técnico de Informática integrado ao ensino médio.</p>
+        <p class="nome">Guilherme Henrique</p>
         <div class="icons">
-          <a href="https://github.com/Ghs-d"><i class="fab fa-github"></i></a>
-          <a href="https://www.linkedin.com/in/guilherme-henrique-629862355/"><i class="fab fa-linkedin"></i></a>
-          <a href="https://www.instagram.com/guii.henrique/"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.instagram.com/mariana_perfil" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://github.com/mariana_perfil" target="_blank"><i class="fab fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/mariana_perfil" target="_blank"><i class="fab fa-linkedin"></i></a>
         </div>
       </div>
+      <img style="width: 100px; height: 100px; background-color: #000; border-radius: 50%; margin: 1.5rem;">
+    </div>
+
+     <div class="card back">
+      <div class="card-content">
+        <p class="sobre">Sou desenvolvedor back-end do site Jornal IF Baiano. Estudante do curso Técnico em Informática integrado ao Ensino Médio.</p>
+        <p class="nome">Silas Andrade</p>
+        <div class="icons">
+          <a href="https://www.instagram.com/seu_perfil" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://github.com/seu_perfil" target="_blank"><i class="fab fa-github"></i></a>
+          <a href="https://www.linkedin.com/in/seu_perfil" target="_blank"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+      <img style="width: 100px; height: 100px; background-color: #000; border-radius: 50%; margin: 1.5rem;">
+    </div>
+
   </section>
   {% endblock %}
