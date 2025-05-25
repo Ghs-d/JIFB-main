@@ -9,17 +9,24 @@
 {% endblock %}
 
 {% block content %}
-    <div class="entrada-container">
-        <img src="{% static 'img/entrada_IFBAIANO.jpg' %}" alt="Entrada do IF" class="entrada-lg">
-        <img src="{% static 'img/LOGO_JIFB_SEM_FUNDO.png'%}" alt="Logo do Jornal" class="entrada-logo">
-        <div class="entrada-mensagem">
-        <p>Bem-vindo ao Jornal IFBaiano! Informação com qualidade e compromisso.</p>
-        </div>
-    <form class="form-pesquisa" role="search" method="GET" action="{% url 'procurar' %}">
-        <input class="form-control me-2" name="pesquisa" type="text" placeholder="Pesquise por notícias, eventos e interesses" aria-label="Pesquisar">
-        <button class="btn btn-pesquisar" type="submit">Pesquisar</button>
-    </form>
+   <div class="entrada-container">
+  <div class="entrada-lg" style="background-image: url('{% static "img/entrada_IFBAIANO.jpg" %}');"></div>
+
+  <img src="{% static 'img/LOGO_JIFB_SEM_FUNDO.png'%}" alt="Logo do Jornal" class="entrada-logo">
+
+  <div class="entrada-conteudo">
+    <div class="entrada-mensagem">
+      <p>Bem-vindo ao Jornal IFBaiano! Informação com qualidade e compromisso.</p>
     </div>
+
+    <form class="form-pesquisa" role="search" method="GET" action="{% url 'procurar' %}">
+      <input class="form-control me-2" name="pesquisa" type="text" placeholder="Pesquise por notícias, eventos e interesses" aria-label="Pesquisar">
+      <button class="btn btn-pesquisar" type="submit">Pesquisar</button>
+    </form>
+  </div>
+</div>
+
+
     
     <section class="noticias" id="noticias">
         <div class="container-noticias">
