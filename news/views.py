@@ -275,20 +275,21 @@ def NoticiaExcluir(request, pk):
 
 
 def Procurar(request):
-    q = request.GET.get('q') if request.GET.get('q') is not None else ''
-    número_de_notícia = 0
+    q = request.GET.get('pesquisa') if request.GET.get('pesquisa') is not None else ''
+    numero_de_noticia = 0
     noticias = Noticia.objects.all().order_by('-updated').filter(
-        Q(título__icontains=q) &
-        Q(visivel=True)
-        )
-    número_de_notícia = noticias.count()
+        Q(título__icontains=q) & Q(visivel=True)
+    )
+    numero_de_noticia = noticias.count()
     if request.user.is_authenticated:  
         foto_de_perfil = Perfil.objects.get(user=request.user).foto_de_perfil
     else:
         foto_de_perfil = None
+
     context = {
-        'noticias':noticias,    
-        'número_de_notícia':número_de_notícia,
-        'minha_foto_de_perfil':foto_de_perfil
+        'noticias': noticias,
+        'número_de_notícia': numero_de_noticia,
+        'minha_foto_de_perfil': foto_de_perfil,
+        'termo': q, 
     }
     return render(request, "news/procurar.html", context)

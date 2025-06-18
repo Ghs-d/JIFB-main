@@ -55,6 +55,14 @@
 
       {% if request.user.is_authenticated %}
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item me-3">
+  <form class="search-box" role="search" method="GET" action="{% url 'procurar' %}">
+    <input class="search-txt" type="text" name="pesquisa" placeholder="Pesquisar" aria-label="Pesquisar" autocomplete="off" />
+    <button type="submit" class="search-button" aria-label="Pesquisar">
+      <i class="fas fa-search"></i>
+    </button>
+  </form>
+</li>
         <li class="nav-item">
           <a class="nav-link" href="{% url 'user' request.user.username %}">
             <img src="{{minha_foto_de_perfil.url}}" alt="Perfil" class="rounded-circle" style="width: 40px; height: 40px;">
@@ -88,6 +96,88 @@
 }
 .dropdown-menu {
   background-color: #f8f9fa;
+}
+
+
+form.search-box {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  background: #1C252E;
+  height: 40px;
+  border-radius: 50px;
+  padding: 5px 10px;
+  width: 40px; 
+  transition: width 0.4s ease;
+  overflow: hidden;
+}
+
+
+form.search-box:hover,
+form.search-box:focus-within {
+  width: 280px; 
+}
+
+
+form.search-box {
+  display: flex;
+  align-items: center;
+  background: #584681;
+  height: 40px;
+  border-radius: 50px;
+  padding: 5px 10px;
+  width: 40px; 
+  transition: width 0.4s ease;
+  overflow: hidden;
+}
+
+
+form.search-box:hover,
+form.search-box:focus-within {
+  width: 270px; 
+}
+
+/* Input de texto */
+.search-txt {
+  border: none;
+  background: none;
+  outline: none;
+  color: #f1f1f1;
+  font-size: 18px;
+  line-height: 30px;
+  width: 0;
+  padding: 0;
+  transition: width 0.4s ease, padding 0.4s ease;
+}
+
+
+form.search-box:hover > .search-txt,
+form.search-box:focus-within > .search-txt {
+  width: 220px;
+  padding: 0 10px;
+}
+
+/* Botão de pesquisa */
+.search-button {
+  color: #cac9c9;
+  background: #584681;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+ 
+  cursor: pointer;
+  
+  flex-shrink: 0;
+  margin-top: 0; /
+}
+
+.navbar-nav.ms-auto .nav-link img {
+  vertical-align: middle;
+  display: inline-block;
+  margin-top: 0; 
 }
 
 </style>
