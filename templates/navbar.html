@@ -25,20 +25,11 @@
           <a class="nav-link" href="{% url 'noticia' 'feed' %}">Ver notícias</a>
         </li>
 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="acoesDropdown" role="button" data-bs-toggle="dropdown"
-            aria-expanded="false">
-            Ações
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="acoesDropdown">
-            {% if request.user.is_authenticated %}
-              <li><a class="dropdown-item" href="{% url 'logout' %}">Sair</a></li>
-            {% else %}
-              <li><a class="dropdown-item" href="{% url 'login' %}">Entrar</a></li>
-              <li><a class="dropdown-item" href="{% url 'register'%}">Registre-se</a></li>
-            {% endif %}
-          </ul>
-        </li>
+        
+          
+            
+          
+        
 
         {% if request.user.is_staff %}
         <li class="nav-item dropdown">
@@ -47,22 +38,30 @@
             Área do Jornalista
           </a>
           <ul class="dropdown-menu" aria-labelledby="jornalistaDropdown">
-            <li><a class="dropdown-item" href="{% url 'publicar' %}">Publicar</a></li>
+            <li><a class="dropdown-item" href="{% url 'publicar_noticia' %}">Publicar</a></li>
           </ul>
         </li>
         {% endif %}
-      </ul>
 
-      {% if request.user.is_authenticated %}
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+        {% if request.user.is_authenticated %}
+              <li class="nav-item"><a class="nav-link"  href="{% url 'logout' %}">Sair</a></li>
+            {% else %}
+              <li class="nav-item"><a class="nav-link"  href="{% url 'login' %}">Entrar</a></li>
+            {% endif %}
+
+      </ul>
+<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item me-3">
-  <form class="search-box" role="search" method="GET" action="{% url 'procurar' %}">
+  <form class="search-box" role="search" method="GET" action="{% url 'procurar_noticia' %}">
     <input class="search-txt" type="text" name="pesquisa" placeholder="Pesquisar" aria-label="Pesquisar" autocomplete="off" />
     <button type="submit" class="search-button" aria-label="Pesquisar">
       <i class="fas fa-search"></i>
     </button>
   </form>
 </li>
+      {% if request.user.is_authenticated %}
+      
         <li class="nav-item">
           <a class="nav-link" href="{% url 'user' request.user.username %}">
             <img src="{{minha_foto_de_perfil.url}}" alt="Perfil" class="rounded-circle" style="width: 40px; height: 40px;">

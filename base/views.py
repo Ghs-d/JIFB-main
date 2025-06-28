@@ -54,7 +54,7 @@ def RegisterUser(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         
-        if form.is_valid:
+        if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.save()
@@ -81,12 +81,19 @@ def HomePage(request):
 
     noticias = Noticia.objects.all().order_by('-updated')[:10]  
     if request.user.is_authenticated:
-        perfil = Perfil.objects.filter(user=request.user)
+        try:
+            perfil = Perfil.objects.get(user=request.user)
+            foto = perfil.foto_de_perfil
+        except Perfil.DoesNotExist:
+            perfil = None
+            foto = None
+
         context = {
-        'noticias':noticias,
-        'perfil':perfil,
-        'minha_foto_de_perfil':Perfil.objects.get(user=request.user).foto_de_perfil
-    }
+            'noticias': noticias,
+            'perfil': perfil,
+            'minha_foto_de_perfil': foto
+        }
+
     else:
         context = {
             'noticias':noticias,

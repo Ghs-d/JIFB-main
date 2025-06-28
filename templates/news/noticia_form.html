@@ -4,19 +4,124 @@
 {% block title %}Publicar notícias{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'CSS/news/style.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/news/style.css' %}">
 {% endblock %}
     
 {% block content %}
-  <div class="container mt-4">
-    <form action="" method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
+    <div class="container mt-4">
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-        {{noticia_form.as_p}}
-        {{arquivo_form.as_p}}
+            <div class="mb-3">
+                {# CORRIGIDO: Usando 'título' como no seu models.py e forms.py #}
+                <label for="{{ noticia_form.título.id_for_label }}" class="form-label">Título:</label>
+                {{ noticia_form.título }} 
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ noticia_form.tags.id_for_label }}" class="form-label">Tags (separadas por vírgula):</label>
+                {{ noticia_form.tags }}
+            </div>
+
+            <div class="mb-3">
+                {# CORRIGIDO: Usando 'capa_noticia' como no seu models.py e forms.py #}
+                <label for="{{ noticia_form.capa_noticia.id_for_label }}" class="form-label">Imagem da Capa:</label>
+                {{ noticia_form.capa_noticia }}
+            </div>
+
+            <div class="mb-3">
+                {# CORRIGIDO: Usando 'id_corpo' para o seletor do TinyMCE e 'noticia_form.corpo' para o campo #}
+                <label for="id_corpo" class="form-label">Conteúdo do Artigo:</label>
+                {{ noticia_form.corpo }} {# Este será o textarea que o TinyMCE vai transformar #}
+            </div>
+            
+            {# Se você ainda tiver o formset de ArquivosForm, descomente e ajuste conforme necessário #}
+            {# Você pode querer adicionar um título ou loop para gerenciar os arquivos existentes e novos #}
+            {# Exemplo simplificado para novos uploads: #}
+            {# <div class="mb-3"> #}
+            {#     <label for="{{ arquivo_form.arquivos.id_for_label }}" class="form-label">Arquivos Adicionais:</label> #}
+            {#     {{ arquivo_form.arquivos }} #}
+            {# </div> #}
+            {# Ou para um formset: #}
+            {# {{ arquivos_formset.management_form }} #}
+            {# {% for form in arquivos_formset %} #}
+            {#     {{ form.as_p }} #}
+            {# {% endfor %} #}
+            
+            <input type="submit" value="Enviar" class="btn btn-success">
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.tiny.cloud/1/wpcpuog85xxy8xjnv0kvo6qhkobmap9tndqouk5hhs2luppk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '#id_corpo', // CORRIGIDO: Deve ser '#id_corpo' para corresponder ao models/forms
+        plugins: 'advlist autolink lists link image charmap print preview anchor code media table paste wordcount fullscreen', // Adicionei 'media', 'table', 'paste', 'wordcount', 'fullscreen' para mais funcionalidades
+        toolbar_mode: 'floating',
+        toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignalignright alignjustify | bullist numlist outdent indent | removeformat | image media | code | table | fullscreen',
         
+        // --- Configuração de Upload de Imagens para o TinyMCE ---
+        image_title: true, // Permite que o usuário defina um título para a imagem
+        automatic_uploads: true, // Habilita uploads automáticos
+        file_picker_types: 'image', // Define que o file picker é para imagens
+        
+        // Esta URL aponta para o endpoint Django que lida com o upload de imagens
+        images_upload_url: '{% url "upload_tinymce_image" %}', 
+        
+        // Este handler personalizado envia o arquivo via AJAX e lida com a resposta
+        images_upload_handler: function (blobInfo, success, failure) {
+            var xhr, formData;
+            xhr = new XMLHttpRequest();
+            xhr.withCredentials = false; // Não enviar cookies cross-domain
 
-      <input type="submit" value="Enviar" class="btn btn-success">
-    </form>
-  </div>
+            // O método deve ser POST e a URL deve ser a mesma configurada acima
+            xhr.open('POST', '{% url "upload_tinymce_image" %}'); 
+
+            xhr.onload = function() {
+                var json;
+
+                // Lida com erros HTTP, como 403 (CSRF) ou outros
+                if (xhr.status === 403) {
+                    failure('HTTP Error: ' + xhr.statusText + ' - Verifique o token CSRF ou as permissões.');
+                    return;
+                }
+
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    failure('HTTP Error: ' + xhr.statusText);
+                    return;
+                }
+
+                // Tenta parsear a resposta JSON
+                try {
+                    json = JSON.parse(xhr.responseText);
+                } catch (e) {
+                    failure('Invalid JSON: ' + xhr.responseText);
+                    return;
+                }
+
+                // Verifica se a resposta contém a 'location' (URL da imagem)
+                if (!json || typeof json.location != 'string') {
+                    failure('Invalid JSON: ' + xhr.responseText);
+                    return;
+                }
+
+                // Chama o callback 'success' do TinyMCE com a URL da imagem
+                success(json.location);
+            };
+
+            // Adiciona o token CSRF ao cabeçalho da requisição para proteção
+            var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            // Cria um FormData para enviar o arquivo
+            formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+            xhr.send(formData); // Envia a requisição AJAX
+        },
+        // --- Fim da Configuração de Upload ---
+    });
+</script>
 {% endblock %}

@@ -1,3 +1,5 @@
+# news/forms.py
+
 from .models import Noticia, ArquivoNaNoticia, ComentarioNaNoticia
 from django.forms import modelformset_factory
 from django.forms import ModelForm
@@ -25,12 +27,14 @@ class NoticiaForm(ModelForm):
     class Meta:
         model = Noticia
         fields = '__all__'
-        exclude = ['autor']
+      
+        exclude = ['autor', 'visivel'] 
+
         widgets = {
             'título': forms.TextInput(attrs={'class': 'form-control'}),
-            'corpo': forms.FileInput(attrs={'class': 'form-control'}),
+            'corpo': forms.Textarea(attrs={'class': 'form-control', 'id': 'id_corpo'}), 
             'capa_noticia': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'visivel': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            
         }
 
 class ArquivosForm(forms.ModelForm):

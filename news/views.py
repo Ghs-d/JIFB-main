@@ -8,6 +8,12 @@ from pathlib import Path
 import markdown
 import os
 
+
+from django.http import JsonResponse # Necessário para o upload de imagens do TinyMCE
+from django.core.files.storage import default_storage # Para gerenciar o salvamento de arquivos
+from django.views.decorators.csrf import csrf_exempt # CUIDADO: Usar com cautela em produção
+import bleach
+
 from .forms import (
     NoticiaForm, 
     ArquivosForm, 
@@ -35,50 +41,41 @@ def NoticiaPublicar(request):
             noticia = noticia_form.save(commit=False)
             noticia.autor = request.user
 
-             # Lê o conteúdo Markdown do arquivo enviado
-            # Primeiro, salve a notícia com o arquivo markdown
+            if noticia.corpo:
+                # CORRIÇÃO AQUI: Converte frozenset para list antes de concatenar
+                allowed_tags = list(bleach.sanitizer.ALLOWED_TAGS) + [ 
+                    'img', 'video', 'source', 'iframe', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                    'p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'blockquote', 'pre', 'code', 'table',
+                    'thead', 'tbody', 'tr', 'th', 'td'
+                ]
+                allowed_attrs = {
+                    **bleach.sanitizer.ALLOWED_ATTRIBUTES, 
+                    'img': ['src', 'alt', 'width', 'height', 'style'],
+                    'a': ['href', 'title', 'target', 'rel'],
+                    'iframe': ['src', 'width', 'height', 'allowfullscreen', 'frameborder'],
+                    'video': ['src', 'controls', 'width', 'height'],
+                    'source': ['src', 'type'],
+                    '*': ['style', 'class', 'id'], 
+                }
+                
+
+                noticia.corpo = bleach.clean(
+                    noticia.corpo,
+                    tags=allowed_tags,
+                    attributes=allowed_attrs,
+                    strip=True
+                )
+
             noticia.save()
 
-            # Agora leia o conteúdo do arquivo markdown enviado
-            if noticia.corpo:
-                markdown_file = noticia.corpo
-
-                # Abrir o arquivo salvo no servidor
-                with markdown_file.open(mode='rb') as f:
-                    markdown_content = f.read().decode('utf-8')
-
-                # Converte para HTML
-                html_content = markdown.markdown(markdown_content)
-
-                # Gera caminho do arquivo HTML com base na data/hora
-                now = timezone.now()
-                file_name = now.strftime("%Y-%m-%d_%H-%M-%S") + ".html"
-                html_path = os.path.join("uploads", "noticias", "html", now.strftime("%Y/%m/%d/"))
-                full_path = os.path.join(settings.MEDIA_ROOT, html_path)
-                os.makedirs(full_path, exist_ok=True)
-
-                full_file_path = os.path.join(full_path, file_name)
-                relative_file_path = os.path.join(html_path, file_name)
-
-                # Salva o conteúdo HTML em um novo arquivo
-                with open(full_file_path, "w", encoding="utf-8") as html_file:
-                    html_file.write(html_content)
-
-                # Atualiza o campo corpo com o caminho do HTML gerado
-                noticia.corpo.name = relative_file_path
-                noticia.save()
-
-            # Salva arquivos adicionais, se existirem
             for arquivo in request.FILES.getlist('arquivos'):
                 if arquivo:
                     ArquivoNaNoticia.objects.create(noticia=noticia, arquivos=arquivo)
 
             return redirect('feed')
-            
     else:
         noticia_form = NoticiaForm()
         arquivo_form = ArquivosForm()
-        
         
     context = {
         'arquivo_form':arquivo_form,
@@ -89,6 +86,29 @@ def NoticiaPublicar(request):
 
 
 
+@csrf_exempt # CUIDADO: Em produção, você DEVE implementar a proteção CSRF corretamente para requisições AJAX
+@login_required(login_url='/login')
+def upload_tinymce_image(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        img_file = request.FILES['file']
+        # Define o caminho de upload dentro do seu MEDIA_ROOT
+        # Ex: MEDIA_ROOT/uploads/news/editor_images/2025/06/imagem.jpg
+        upload_dir = os.path.join('uploads', 'news', 'editor_images', timezone.now().strftime("%Y/%m/%d/"))
+        
+        # Garante que o diretório de upload exista
+        full_upload_path = os.path.join(settings.MEDIA_ROOT, upload_dir)
+        os.makedirs(full_upload_path, exist_ok=True)
+
+        # Salva o arquivo usando o sistema de armazenamento padrão do Django
+        file_path_in_media = default_storage.save(os.path.join(upload_dir, img_file.name), img_file)
+
+        # Retorna a URL completa da imagem salva para o TinyMCE
+        file_url = request.build_absolute_uri(default_storage.url(file_path_in_media))
+        
+        return JsonResponse({'location': file_url}) # TinyMCE espera uma resposta JSON com o campo 'location'
+    return JsonResponse({'error': 'No image file uploaded'}, status=400)
+
+
 
 def NoticiaPage(request, pk):
     if pk.isnumeric():
@@ -97,7 +117,7 @@ def NoticiaPage(request, pk):
         comentarios = ComentarioNaNoticia.objects.filter(noticia=noticia).order_by('-data')
 
         if noticia.visivel or ( not noticia.visivel and request.user.is_staff):
-            conteudo_html = noticia.corpo
+            conteudo_html = noticia.corpo # Agora 'corpo' já é o HTML
             perfil = Perfil.objects.get(user=request.user) if request.user.is_authenticated else None
 
             if request.method == 'POST' and request.user.is_authenticated:
@@ -146,90 +166,87 @@ def NoticiaPage(request, pk):
         return redirect('feed')
     
     
+# news/views.py
+
+# ... (suas importações e outras funções)
+
 @login_required(login_url='/login')
 def NoticiaEditar(request, pk):
+    noticia = get_object_or_404(Noticia, id=pk)
 
-    noticia = Noticia.objects.get(id=pk)
-
-    if not request.user.is_staff:
-        return HttpResponse("<h1>Somente o autor pode alterar alguma coisa dessa notícia!</h1>")
-
+    # Lógica de permissão: apenas staff OU o autor da notícia pode editar
+    # Ajustei o comentário para refletir essa lógica comum
+    if not request.user.is_staff and noticia.autor != request.user:
+        return HttpResponse("<h1>Você não tem permissão para editar esta notícia!</h1>")
 
     if request.method == 'POST':
-
         noticia_form = NoticiaForm(request.POST, request.FILES, instance=noticia)
+        # O ArquivoFormSet gerencia os arquivos existentes e os marcados para exclusão.
+        # Não precisamos de uma query separada aqui antes de validar/salvar.
         arquivos_formset = ArquivoFormSet(request.POST, request.FILES, queryset=ArquivoNaNoticia.objects.filter(noticia=noticia))
-        arquivos = ArquivoNaNoticia.objects.filter(noticia=noticia)
-
 
         if noticia_form.is_valid() and arquivos_formset.is_valid():
             noticia = noticia_form.save(commit=False)
-            noticia.autor = request.user
-            arquivos = arquivos_formset.save(commit=False)
-            noticia_form.save()
-            
+            noticia.autor = request.user # Garante que o autor permaneça correto
+
+            # --- Lógica de Sanitização do HTML do TinyMCE (MUITO IMPORTANTE) ---
             if noticia.corpo:
-                markdown_file = noticia.corpo
+                # CORREÇÃO: Converte bleach.sanitizer.ALLOWED_TAGS (frozenset) para list antes de concatenar
+                allowed_tags = list(bleach.sanitizer.ALLOWED_TAGS) + [ 
+                    'img', 'video', 'source', 'iframe', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                    'p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'blockquote', 'pre', 'code', 'table',
+                    'thead', 'tbody', 'tr', 'th', 'td'
+                ]
+                allowed_attrs = {
+                    **bleach.sanitizer.ALLOWED_ATTRIBUTES, 
+                    'img': ['src', 'alt', 'width', 'height', 'style'],
+                    'a': ['href', 'title', 'target', 'rel'],
+                    'iframe': ['src', 'width', 'height', 'allowfullscreen', 'frameborder'],
+                    'video': ['src', 'controls', 'width', 'height'],
+                    'source': ['src', 'type'],
+                    '*': ['style', 'class', 'id'], 
+                }
+    
+                noticia.corpo = bleach.clean(
+                    noticia.corpo,
+                    tags=allowed_tags,
+                    attributes=allowed_attrs,
+                    strip=True
+                )
+          
 
-                # Abrir o arquivo salvo no servidor
-                with markdown_file.open(mode='rb') as f:
-                    markdown_content = f.read().decode('utf-8')
+            noticia.save() 
 
-                # Converte para HTML
-                html_content = markdown.markdown(markdown_content)
-
-                # Gera caminho do arquivo HTML com base na data/hora
-                now = timezone.now()
-                file_name = now.strftime("%Y-%m-%d_%H-%M-%S") + ".html"
-                html_path = os.path.join("uploads", "noticias", "html", now.strftime("%Y/%m/%d/"))
-                full_path = os.path.join(settings.MEDIA_ROOT, html_path)
-                os.makedirs(full_path, exist_ok=True)
-
-                full_file_path = os.path.join(full_path, file_name)
-                relative_file_path = os.path.join(html_path, file_name)
-
-                # Salva o conteúdo HTML em um novo arquivo
-                with open(full_file_path, "w", encoding="utf-8") as html_file:
-                    html_file.write(html_content)
-
-                # Atualiza o campo corpo com o caminho do HTML gerado
-                noticia.corpo.name = relative_file_path
-                noticia.save()
-
-            # Esse loop vai salvar os arquivos editados
-            for arquivo in arquivos:
-                arquivo.noticia = noticia
-                arquivo.save()
             
+            arquivos_formset.save() 
             
-            # Esse loop vai deletar os arquivos
+        
             for obj in arquivos_formset.deleted_objects:
-                arquivos = ArquivoNaNoticia.objects.filter(noticia=obj.noticia)
+                try:
+                   
+                    if obj.arquivos: 
+                        Path(obj.arquivos.path).unlink(missing_ok=True) 
+                    obj.delete()  
+                except Exception as e:
+                    
+                    print(f"Erro ao excluir o arquivo {obj.arquivos.name}: {e}")
 
-                for arquivo in arquivos:
-                    try:
-                        Path(arquivo.arquivos.path).unlink(missing_ok=True)  # apaga do disco
-                        arquivo.delete()  # apaga do banco
-                    except Exception as e:
-                        print(f"Erro ao excluir {arquivo.arquivos.name}: {e}")
-
-                obj.delete()  
-
-                
+           
             novos_arquivos = request.FILES.getlist('novos_arquivos')
-            
-            # Esse loop vai criar novos Arquivos
             for arq in novos_arquivos:
+      
                 ArquivoNaNoticia.objects.create(noticia=noticia, arquivos=arq)
             
-            return redirect('home')
+            return redirect('noticia', pk=noticia.id) 
 
     else:
+      
         noticia_form = NoticiaForm(instance=noticia)
+      
         arquivos_formset = ArquivoFormSet(queryset=ArquivoNaNoticia.objects.filter(noticia=noticia))
 
+    # Obtenha a foto de perfil do usuário logado para o contexto
     foto_de_perfil = Perfil.objects.get(user=request.user).foto_de_perfil
-
 
     context = {
         'noticia_form': noticia_form,
@@ -243,13 +260,13 @@ def NoticiaEditar(request, pk):
 
 @login_required(login_url='/login')
 def NoticiaExcluir(request, pk):
-    noticia = Noticia.objects.get(id=pk)
+    noticia = get_object_or_404(Noticia, id=pk)
 
-    if not request.user.is_staff:
+    if not request.user.is_staff: 
         return HttpResponse("<h1>Somente o autor pode alterar alguma coisa dessa notícia!</h1>")
 
     if request.method == 'POST':
-        # Exclui arquivos relacionados à notícia
+        # Exclui arquivos relacionados à notícia (seus anexos)
         arquivos = ArquivoNaNoticia.objects.filter(noticia=noticia.id)
         for arquivo in arquivos:
             try:
@@ -259,11 +276,9 @@ def NoticiaExcluir(request, pk):
         arquivos.delete()
         
         
-        # Exclui possíveis arquivos diretos da notícia
         if noticia.capa_noticia:
             Path(noticia.capa_noticia.path).unlink(missing_ok=True)
-        if noticia.corpo:
-            Path(noticia.corpo.path).unlink(missing_ok=True)
+        
 
         noticia.delete()
         return redirect('feed')
@@ -274,12 +289,16 @@ def NoticiaExcluir(request, pk):
                                                 })
 
 
+
+
 def Procurar(request):
     q = request.GET.get('pesquisa') if request.GET.get('pesquisa') is not None else ''
     numero_de_noticia = 0
-    noticias = Noticia.objects.all().order_by('-updated').filter(
-        Q(título__icontains=q) & Q(visivel=True)
-    )
+    noticias = Noticia.objects.filter(visivel=True).filter(
+    
+        Q(título__icontains=q) | Q(corpo__icontains=q) 
+    ).order_by('-updated')
+    
     numero_de_noticia = noticias.count()
     if request.user.is_authenticated:  
         foto_de_perfil = Perfil.objects.get(user=request.user).foto_de_perfil
@@ -288,7 +307,7 @@ def Procurar(request):
 
     context = {
         'noticias': noticias,
-        'número_de_notícia': numero_de_noticia,
+        'numero_de_noticia': numero_de_noticia,
         'minha_foto_de_perfil': foto_de_perfil,
         'termo': q, 
     }

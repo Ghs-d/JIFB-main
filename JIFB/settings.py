@@ -12,15 +12,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-
-
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv() # Carrega as variáveis de ambiente do .env
 
-# Acessando as variáveis de ambiente
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# MANTENHA APENAS ESTA DEFINIÇÃO DE BASE_DIR
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -28,9 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-DEBUG = os.getenv("DEBUG")
+# CORRIGIDO: Converte a string 'DEBUG' de .env para booleano
+DEBUG = os.getenv("DEBUG", "False").lower() == "true" 
 
 ALLOWED_HOSTS = []
+if DEBUG: # Se DEBUG for True, permite localhost e 127.0.0.1
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -42,8 +43,6 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    #'rest_framework',
 ]
 THIRD_PARTY_APPS = []
 
@@ -51,9 +50,8 @@ LOCAL_APPS = [
     "base.apps.BaseConfig",
     'news.apps.NewsConfig',
     'users.apps.UsersConfig',
-    ]
-  
-
+]
+ 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -129,16 +127,17 @@ USE_I18N = True
 USE_TZ = True
 
 
-
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+# MEDIA files (User-uploaded content)
+# REMOVIDA A DUPLICAÇÃO. MANTIDA APENAS UMA VEZ AQUI.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

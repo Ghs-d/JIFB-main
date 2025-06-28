@@ -1,31 +1,55 @@
-{% load static %}
+{# news/noticia.html #}
+{% load static %} {# Necessário para usar {% static %} #}
+
 <section>
+    <div class="noticia"> {# Classe principal do container da notícia #}
+        {% if noticia.visivel == False and request.user.is_staff == True %}
+            {# Se a notícia não for visível e o usuário for staff, exibe um aviso #}
+            <h3 style="color: red; text-align: center;">{{ aviso }}</h3> 
+        {% endif %}
 
-  <div class="noticia">
-    {% if noticia.visivel == False and request.user.is_staff == True %}
+        {% if request.user.is_staff == True %}
+            <div class="d-flex gap-2 mb-3">
+                {# CORREÇÃO AQUI: Link "Editar Notícia" formatado corretamente #}
+                <a href="{% url 'editar_noticia' noticia.id %}" class="btn btn-sm btn-warning">
+                    <i class="fas fa-pen"></i> Editar
+                </a>
+                {# CORREÇÃO AQUI: Link "Excluir Notícia" formatado corretamente #}
+                <a href="{% url 'excluir_noticia' noticia.id %}" class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash-alt"></i> Excluir
+                </a>
+            </div>
+        {% endif %}
 
-    <h3>{{aviso}}</h3>
+        <div class="h3"> {# Mantendo seu div com a classe 'h3' #}
+            <h3>{{noticia.título}}</h3>
+        </div>
 
-    {% endif %}
+        {# CORREÇÃO AQUI: Adicionando a verificação para a imagem da capa #}
+        {% if noticia.capa_noticia %}
+            <img src="{{ noticia.capa_noticia.url }}" alt="Capa da Notícia: {{ noticia.título }}" class="capa">
+        {% else %}
+            {# Imagem padrão se não houver capa #}
+            <img src="{% static 'img/placeholder_noticia.jpg' %}" alt="Imagem padrão de notícia" class="capa">
+        {% endif %}
 
-    {% if request.user.is_staff == True %}
-    <div class="d-flex gap-2 mb-3">
-      <a href="{% url 'editar' noticia.id %}" class="btn btn-sm btn-warning">
-        <i class="fas fa-pen"></i> Editar
-      </a>
-      <a href="{% url 'excluir' noticia.id %}" class="btn btn-sm btn-danger">
-        <i class="fas fa-trash-alt"></i> Excluir
-      </a>
+        {# CORREÇÃO CRÍTICA AQUI: EXIBINDO O CONTEÚDO DO CORPO (HTML DO TINYMCE) #}
+        <div class="conteudo"> {# APLICANDO A CLASSE 'conteudo' PARA SEU CSS #}
+            {{ noticia.corpo|safe }} {# USA O FILTRO '|safe' PARA RENDERIZAR O HTML #}
+        </div>
+
+        {# Exemplo de como exibir as tags, se quiser #}
+        {% if noticia.tags.all %}
+            <div class="noticia-tags mt-4">
+                <strong>Tags:</strong> 
+                {% for tag in noticia.tags.all %}
+                    <span class="badge bg-info text-dark me-1">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# Linha divisória após o conteúdo #}
+        <hr class="my-4"> 
+
     </div>
-    {% endif %}
-
-
-    <div class="h3">
-      <h3>{{noticia.título}}</h3>
-    </div>
-
-
-    <img src="{{ noticia.capa_noticia.url }}" alt="Capa da Notícia" class="capa">
-    <include src="{{ conteudo_html.url }}" class=""></include>
-  </div>
 </section>

@@ -8,17 +8,18 @@ class Noticia(models.Model):
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     título = models.CharField(max_length=500)
     
-    corpo = models.FileField(upload_to="uploads/noticias/noticias/%Y/%m/%d")
+    corpo = models.TextField(blank=True, null=True) 
     capa_noticia = models.ImageField(upload_to="uploads/noticias/CAPAS/%Y/%m/%d")
+
+   
+    tags = models.CharField(max_length=255, blank=True, help_text="Separe as tags por vírgula")
 
     visivel = models.BooleanField(default=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
-
     def __str__(self):
         return self.título
-
 
 class ArquivoNaNoticia(models.Model):
     noticia = models.ForeignKey(Noticia, related_name='arquivos', on_delete=models.CASCADE)
