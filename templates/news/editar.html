@@ -6,7 +6,7 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'CSS/news/editar.css' %}" />
     <style>
-        /* Adicione estilos para o container do formulário se necessário */
+        
         .form-container {
             max-width: 900px;
             margin: 40px auto;
@@ -37,13 +37,11 @@
             border-radius: 5px;
         }
         .arquivo-box label {
-            display: inline-block; /* Para o checkbox de excluir */
+            display: inline-block; 
             margin-left: 5px;
             font-weight: normal;
         }
-        .btn-outline-success {
-            /* Mantenha seu estilo de botão */
-        }
+        
     </style>
 {% endblock %}
 
@@ -120,7 +118,7 @@
 <script src="https://cdn.tiny.cloud/1/wpcpuog85xxy8xjnv0kvo6qhkobmap9tndqouk5hhs2luppk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     tinymce.init({
-        selector: '#id_corpo', // DEVE CORRESPONDER AO ID DO SEU TEXTAREA
+        selector: '#id_corpo', 
         plugins: 'advlist autolink lists link image charmap print preview anchor code media table paste wordcount fullscreen',
         toolbar_mode: 'floating',
         toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignalignright alignjustify | bullist numlist outdent indent | removeformat | image media | code | table | fullscreen',
