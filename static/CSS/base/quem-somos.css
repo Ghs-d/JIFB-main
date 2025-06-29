@@ -399,3 +399,17 @@
    font-weight: bold;
    margin-top: 1rem;
  }
+
+  .nome-left {
+   text-align: left;
+   font-style: italic;
+   font-weight: bold;
+   margin-top: 1rem;
+ }
+
+  .texto-right {
+   text-align: right;
+   font-style: italic;
+   
+   margin-top: 1rem;
+ }

@@ -1,0 +1,104 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block title %}Meus Artigos | JIFB{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'CSS/news/style.css' %}"> {# Ou o CSS que estiliza seus cards de notícia #}
+    <style>
+        .meus-artigos-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .meus-artigos-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .artigo-item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            gap: 20px;
+        }
+        .artigo-item:last-child {
+            border-bottom: none;
+        }
+        .artigo-item-info {
+            flex-grow: 1;
+        }
+        .artigo-item-info h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 20px;
+            color: #555;
+        }
+        .artigo-item-info p {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        .artigo-item-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0; /* Impede que os botões encolham */
+        }
+        .artigo-item-thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        @media (max-width: 768px) {
+            .artigo-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .artigo-item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="meus-artigos-container">
+        <h2>Meus Artigos</h2>
+
+        {% if meus_artigos %}
+            {% for artigo in meus_artigos %}
+                <div class="artigo-item">
+                    {% if artigo.capa_noticia %}
+                        <img src="{{ artigo.capa_noticia.url }}" alt="Capa" class="artigo-item-thumb">
+                    {% else %}
+                        <img src="{% static 'img/placeholder_noticia.jpg' %}" alt="Placeholder" class="artigo-item-thumb">
+                    {% endif %}
+                    
+                    <div class="artigo-item-info">
+                        <h3><a href="{% url 'noticia' artigo.id %}" style="text-decoration: none; color: #333;">{{ artigo.título }}</a></h3>
+                        <p>Publicado em: {{ artigo.created|date:"d/m/Y H:i" }}</p>
+                        <p>Visível: {% if artigo.visivel %}Sim{% else %}Não{% endif %}</p>
+                    </div>
+                    <div class="artigo-item-actions">
+                        <a href="{% url 'editar_noticia' artigo.id %}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-pen"></i> Editar
+                        </a>
+                        <a href="{% url 'excluir_noticia' artigo.id %}" class="btn btn-sm btn-danger">
+                            <i class="fas fa-trash-alt"></i> Excluir
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; color: #777;">Você ainda não postou nenhum artigo.</p>
+        {% endif %}
+    </div>
+{% endblock %}

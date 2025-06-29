@@ -80,6 +80,7 @@ urlpatterns = [
     path('u/apagar_comentarios/<str:pk>', ApagarComentariosUserProfile, name='apagar-comentarios'),
     path('u/bloquear/<str:pk>', BloquearPerfil, name='bloquear-user'),
 
+     path('noticias/', include('news.urls')), 
 ]
 
 # Para servir arquivos de mídia (uploads) em ambiente de desenvolvimento (DEBUG=True)

@@ -111,61 +111,76 @@ def upload_tinymce_image(request):
 
 
 def NoticiaPage(request, pk):
-    if pk.isnumeric():
-        noticia = get_object_or_404(Noticia, id=pk)
-        arquivos = ArquivoNaNoticia.objects.filter(noticia=noticia)
-        comentarios = ComentarioNaNoticia.objects.filter(noticia=noticia).order_by('-data')
+    # Se o PK não for numérico, significa que a URL não é para uma notícia individual
+    # E não é mais o 'feed' (pois agora temos uma view dedicada para o feed)
+    if not pk.isnumeric():
+        # Redireciona para o feed (ou renderiza 404, se preferir uma página de erro)
+        # Se um caminho não numérico chegar aqui, algo está errado na URL ou é uma URL antiga.
+        # Uma boa prática seria retornar um 404 aqui: raise Http404("Notícia não encontrada.")
+        # Mas para manter a funcionalidade de redirecionar para o feed, mantemos.
+        return redirect('feed') 
+        # Lembre-se de que a URL '/noticias/feed/' agora aponta para FeedNoticiasView.
 
-        if noticia.visivel or ( not noticia.visivel and request.user.is_staff):
-            conteudo_html = noticia.corpo # Agora 'corpo' já é o HTML
-            perfil = Perfil.objects.get(user=request.user) if request.user.is_authenticated else None
+    # Tenta buscar a notícia pelo ID
+    noticia = get_object_or_404(Noticia, id=pk)
+    
+    arquivos = ArquivoNaNoticia.objects.filter(noticia=noticia)
+    comentarios = ComentarioNaNoticia.objects.filter(noticia=noticia).order_by('-data')
 
-            if request.method == 'POST' and request.user.is_authenticated:
-                if not perfil.pode_comentar:
-                    return HttpResponse('<h1>Você está proibido de comentar</h1>')
-
-                if 'pai' in request.POST and request.POST.get('pai'):  # É resposta
-                    form = RespostaForm(request.POST)
-                else:
-                    form = ComentarioForm(request.POST)
-
-                if form.is_valid():
-                    comentario = form.save(commit=False)
-                    comentario.autor = perfil
-                    comentario.noticia = noticia
-                    comentario.save()
-                    return redirect('noticia', pk=pk)
-
-            context = {
-                'conteudo_html':conteudo_html,
-                'noticia': noticia,
-                'arquivos': arquivos,
-                'comentarios': comentarios,
-                'comentario_form': ComentarioForm(),
-                'resposta_form': RespostaForm(),
-                'minha_foto_de_perfil': perfil.foto_de_perfil if perfil else None,
-                'perfil': perfil,
-                'numero_de_comentarios': len(comentarios)
-            }
-
-            if not noticia.visivel:
-                context['aviso'] = "Essa notícia não está visível para os usuários"
-
-            return render(request, "news/noticia_page.html", context)
-        else:
-            return redirect('feed')
-
-    elif pk == 'feed':
-        noticias = Noticia.objects.all().order_by('-updated')
+    # Verifica permissões de visualização
+    if noticia.visivel or (not noticia.visivel and request.user.is_staff):
+        conteudo_html = noticia.corpo # Agora 'corpo' já é o HTML
         perfil = Perfil.objects.get(user=request.user) if request.user.is_authenticated else None
-        return render(request, "news/feed.html", {
-            'noticias': noticias,
-            'minha_foto_de_perfil': perfil.foto_de_perfil if perfil else None
-        })
+
+        if request.method == 'POST' and request.user.is_authenticated:
+            if not perfil.pode_comentar:
+                return HttpResponse('<h1>Você está proibido de comentar</h1>')
+
+            if 'pai' in request.POST and request.POST.get('pai'):  # É resposta
+                form = RespostaForm(request.POST)
+            else:
+                form = ComentarioForm(request.POST)
+
+            if form.is_valid():
+                comentario = form.save(commit=False)
+                comentario.autor = perfil
+                comentario.noticia = noticia
+                comentario.save()
+                return redirect('noticia', pk=pk)
+
+        context = {
+            'conteudo_html':conteudo_html,
+            'noticia': noticia,
+            'arquivos': arquivos,
+            'comentarios': comentarios,
+            'comentario_form': ComentarioForm(),
+            'resposta_form': RespostaForm(),
+            'minha_foto_de_perfil': perfil.foto_de_perfil if perfil else None,
+            'perfil': perfil,
+            'numero_de_comentarios': len(comentarios)
+        }
+
+        if not noticia.visivel:
+            context['aviso'] = "Essa notícia não está visível para os usuários"
+
+        return render(request, "news/noticia_page.html", context)
     else:
-        return redirect('feed')
+        # Se a notícia não é visível e o usuário não é staff, redireciona ou mostra 404
+        return redirect('feed') # Ou raise Http404("Notícia não encontrada.")
     
     
+def FeedNoticiasView(request):
+    noticias = Noticia.objects.filter(visivel=True).order_by('-updated', '-created') # Apenas notícias visíveis
+    perfil = Perfil.objects.get(user=request.user) if request.user.is_authenticated else None
+
+    context = {
+        'noticias': noticias, # Renomeei a variável para 'noticias' no contexto
+        'minha_foto_de_perfil': perfil.foto_de_perfil if perfil else None,
+        'perfil': perfil,
+    }
+    # Renderiza o mesmo template que você já usa para o feed
+    return render(request, "news/feed.html", context)
+
 # news/views.py
 
 # ... (suas importações e outras funções)
@@ -312,3 +327,15 @@ def Procurar(request):
         'termo': q, 
     }
     return render(request, "news/procurar.html", context)
+
+@login_required(login_url='/login') 
+def MeusArtigos(request):
+    meus_artigos = Noticia.objects.filter(autor=request.user).order_by('-created')
+    perfil = Perfil.objects.get(user=request.user) if request.user.is_authenticated else None
+
+    context = {
+        'meus_artigos': meus_artigos,
+        'minha_foto_de_perfil': perfil.foto_de_perfil if perfil else None,
+        'perfil': perfil,
+    }
+    return render(request, 'news/meus_artigos.html', context)

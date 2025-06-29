@@ -48,7 +48,7 @@ THIRD_PARTY_APPS = []
 
 LOCAL_APPS = [
     "base.apps.BaseConfig",
-    'news.apps.NewsConfig',
+    'news.apps.NewsConfig',""
     'users.apps.UsersConfig',
 ]
  
