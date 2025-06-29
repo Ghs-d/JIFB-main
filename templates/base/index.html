@@ -45,11 +45,11 @@
                                 <p>Publicado em {{noticia.created|date:"d \de F \de Y \à\s H:i"}}</p>
                                 <p>Criado por {{noticia.autor}}</p>
                                 
-                                {# CORREÇÃO AQUI: Bloco para exibir as tags de um CharField #}
+                        
                                 {% if noticia.tags %} {# Verifica se o campo tags não está vazio #}
                                     <div class="noticia-tags">
                                         Tags: 
-                                        {# Divide a string de tags por vírgulas e itera #}
+                                      
                                         {% for tag_name in noticia.tags|split:"," %}
                                             {# Remove espaços em branco do início/fim de cada tag #}
                                             <span class="badge bg-secondary me-1">{{ tag_name|strip }}</span>

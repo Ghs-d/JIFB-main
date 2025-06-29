@@ -6,33 +6,62 @@
     <link rel="stylesheet" href="{% static 'CSS/news/noticias.css' %}">
 {% endblock %}
 
+{% load news_filters %} 
+{% load static %}
+
+
+
+    <link rel="stylesheet" href="{% static 'CSS/news/noticias.css' %}">
+
+
 {% block content %}
     <div class="page-container">
         <div class="content-wrap">
-            <section class="noticias">
+            {# Removida a section 'noticias' duplicada e a identação ajustada #}
+            <section class="noticias" id="noticias"> 
                 <div class="noticias-container">
+                    {# Itera sobre cada notícia passada pela view #}
                     {% for noticia in noticias %}
-                        {% if noticia.visivel == True %}
+                        {# Condição para exibir a notícia: se é visível OU se o usuário é staff (jornalista) #}
+                        {% if noticia.visivel or request.user.is_staff %}
                             <div class="noticia-card">
+                                {# Link para a página individual da notícia #}
                                 <a href="{% url 'noticia' noticia.id %}">
-                                    <img src="{{ noticia.capa_noticia.url }}" alt="Notícia {{ noticia.id }}">
+                                    {# Lógica para exibir a imagem da capa da notícia #}
+                                    {% if noticia.capa_noticia %}
+                                        {# Se a notícia tem uma capa, usa a URL dela #}
+                                        <img src="{{ noticia.capa_noticia.url }}" alt="Capa da Notícia: {{ noticia.título }}">
+                                    {% else %}
+                                        {# Se não tem capa, usa uma imagem de placeholder #}
+                                        <img src="{% static 'img/placeholder_noticia.jpg' %}" alt="Imagem padrão de notícia">
+                                    {% endif %}
                                 </a>
                                 <div class="noticia-card-content">
+                                    {# Título da notícia #}
                                     <h3>{{noticia.título}}</h3>
-                                    <p>Publicado em {{noticia.created}}</p>
+                                    
+                                    {# Mensagem de aviso para o staff se a notícia não estiver visível publicamente #}
+                                    {% if not noticia.visivel and request.user.is_staff %}
+                                        <p style="color: red; font-weight: bold;">(Não visível para usuários)</p>
+                                    {% endif %}
+
+                                    {# Informações de publicação e autoria #}
+                                    <p>Publicado em {{noticia.created|date:"d \de F \de Y \à\s H:i"}}</p> {# Data e hora formatadas #}
                                     <p>Criado por {{noticia.autor}}</p>
-                                    <a href="{% url 'noticia' noticia.id %}" class="noticia-leia">Leia mais</a>
-                                </div>
-                            </div>
-                            {% elif noticia.visivel == False and request.user.is_staff %}
-                            <div class="noticia-card">
-                                <a href="{% url 'noticia' noticia.id %}">
-                                    <img src="{% static 'media/' %}{{ noticia.capa_noticia }}" alt="Notícia {{ noticia.id }}">
-                                </a>
-                                <div class="noticia-card-content">
-                                    <h3>{{noticia.título}}</h3>
-                                    <p>Publicado em {{noticia.created}}</p>
-                                    <p>Criado por {{noticia.autor}}</p>
+                                    
+                                    {# Bloco para exibir as tags da notícia #}
+                                    {% if noticia.tags %} {# Verifica se o campo 'tags' não está vazio #}
+                                        <div class="noticia-tags">
+                                            Tags: 
+                                            {# Divide a string de tags por vírgulas e itera sobre cada tag #}
+                                            {% for tag_name in noticia.tags|split:"," %}
+                                                {# Remove espaços em branco do início/fim da tag e aplica estilo Bootstrap #}
+                                                <span class="badge bg-secondary me-1">{{ tag_name|strip }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    {# Link para "Leia mais" #}
                                     <a href="{% url 'noticia' noticia.id %}" class="noticia-leia">Leia mais</a>
                                 </div>
                             </div>

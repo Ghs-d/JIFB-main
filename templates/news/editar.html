@@ -1,45 +1,184 @@
 {% extends "main.html" %}
 {% load static %}
 
-{% block title %}Editar notícias{% endblock %}
+{% block title %}Editar Notícia{% endblock %} {# Título mais específico #}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'CSS/news/editar.css' %}" />
+    <link rel="stylesheet" href="{% static 'CSS/news/editar.css' %}" />
+    <style>
+        /* Adicione estilos para o container do formulário se necessário */
+        .form-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-container label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .form-container input[type="text"],
+        .form-container textarea,
+        .form-container input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .arquivo-box {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .arquivo-box label {
+            display: inline-block; /* Para o checkbox de excluir */
+            margin-left: 5px;
+            font-weight: normal;
+        }
+        .btn-outline-success {
+            /* Mantenha seu estilo de botão */
+        }
+    </style>
 {% endblock %}
 
 
 {% block content %}
-    
-
-
 <div class="form-container">
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    
-    {{ noticia_form.as_p }}
-    
-    <!-- Arquivos Existentes -->
-    <h3>Arquivos Existentes</h3>
-    {{ arquivos_formset.management_form }}
-    {% for form in arquivos_formset %}
-    <div class="arquivo-box">
-      {{ form.id }}
-      {{ form.arquivos.label_tag }} {{ form.arquivos }}
-      {{ form.nome.label_tag }} {{ form.nome }}
-      <label>
-        {{ form.DELETE }} Excluir
-      </label>
-    </div>
-    {% endfor %}
-    
-    <h3>Adicionar Novos Arquivos</h3>
-    <input type="file" name="novos_arquivos" multiple />
-    
+    <h2 class="mb-4">Editar Notícia: {{ noticia.título }}</h2> {# Título da página de edição #}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {# Renderização manual dos campos para maior controle e para o TinyMCE #}
+        <div class="mb-3">
+            <label for="{{ noticia_form.título.id_for_label }}" class="form-label">Título:</label>
+            {{ noticia_form.título }}
+        </div>
 
-    <br>
-    <input class="btn btn-outline-success" type="submit" value="Salvar alterações" />
-      </form>
-    </div>
-    
+        <div class="mb-3">
+            <label for="{{ noticia_form.tags.id_for_label }}" class="form-label">Tags (separadas por vírgula):</label>
+            {{ noticia_form.tags }}
+        </div>
 
+        <div class="mb-3">
+            <label for="{{ noticia_form.capa_noticia.id_for_label }}" class="form-label">Imagem da Capa:</label>
+            {% if noticia.capa_noticia %}
+                <img src="{{ noticia.capa_noticia.url }}" alt="Capa atual" style="max-width: 150px; height: auto; display: block; margin-bottom: 10px;">
+                <p>Atualmente: <a href="{{ noticia.capa_noticia.url }}" target="_blank">{{ noticia.capa_noticia.name }}</a></p>
+            {% endif %}
+            {{ noticia_form.capa_noticia }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_corpo" class="form-label">Conteúdo do Artigo:</label>
+            {{ noticia_form.corpo }} {# Este será o textarea que o TinyMCE vai transformar #}
+        </div>
+
+        <div class="mb-3 form-check">
+            {{ noticia_form.visivel.label_tag }}
+            {{ noticia_form.visivel }}
+        </div>
+        
+        <h3 class="mt-4 mb-3">Arquivos Existentes</h3>
+        {{ arquivos_formset.management_form }}
+        {% for form in arquivos_formset %}
+        <div class="arquivo-box">
+            {{ form.id }} {# Campo oculto para o ID do arquivo #}
+            {% if form.instance.arquivos %} {# Verifica se o arquivo existe para exibir o link #}
+                <p>Arquivo: <a href="{{ form.instance.arquivos.url }}" target="_blank">{{ form.instance.arquivos.name }}</a></p>
+            {% else %}
+                <p>Nenhum arquivo.</p>
+            {% endif %}
+            
+            {# CORRIGIDO: Removido form.nome (não existe no modelo ArquivoNaNoticia) #}
+            {# {{ form.nome.label_tag }} {{ form.nome }} #} 
+            
+            <label class="form-check-label">
+                {{ form.DELETE }} Excluir
+            </label>
+            {# O campo de upload de arquivo individual do formset, se você quiser permitir substituição #}
+            {{ form.arquivos }} 
+        </div>
+        {% endfor %}
+        
+        <h3 class="mt-4 mb-3">Adicionar Novos Arquivos</h3>
+        <input type="file" name="novos_arquivos" multiple class="form-control" />
+        
+        <br>
+        <input class="btn btn-outline-success mt-3" type="submit" value="Salvar alterações" />
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{# ADICIONADO: CÓDIGO DO TINYMCE PARA A PÁGINA DE EDIÇÃO #}
+<script src="https://cdn.tiny.cloud/1/wpcpuog85xxy8xjnv0kvo6qhkobmap9tndqouk5hhs2luppk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '#id_corpo', // DEVE CORRESPONDER AO ID DO SEU TEXTAREA
+        plugins: 'advlist autolink lists link image charmap print preview anchor code media table paste wordcount fullscreen',
+        toolbar_mode: 'floating',
+        toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignalignright alignjustify | bullist numlist outdent indent | removeformat | image media | code | table | fullscreen',
+        
+        image_title: true,
+        automatic_uploads: true,
+        file_picker_types: 'image',
+        
+        images_upload_url: '{% url "upload_tinymce_image" %}', 
+        
+        images_upload_handler: function (blobInfo, success, failure) {
+            return new Promise((resolve, reject) => {
+                var xhr, formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '{% url "upload_tinymce_image" %}'); 
+
+                xhr.onload = function() {
+                    var json;
+
+                    if (xhr.status === 403) {
+                        reject('HTTP Error: ' + xhr.statusText + ' - Verifique o token CSRF ou as permissões.');
+                        return;
+                    }
+
+                    if (xhr.status < 200 || xhr.status >= 300) {
+                        reject('HTTP Error: ' + xhr.statusText);
+                        return;
+                    }
+
+                    try {
+                        json = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        reject('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+
+                    if (!json || typeof json.location != 'string') {
+                        reject('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+
+                    resolve(json.location);
+                };
+
+                xhr.onerror = function () {
+                    reject('Network Error: Could not connect to the server.');
+                };
+
+                var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+                formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+                xhr.send(formData);
+            });
+        },
+    });
+</script>
 {% endblock %}
