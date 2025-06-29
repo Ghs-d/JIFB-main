@@ -63,13 +63,10 @@ urlpatterns = [
     path('register/', RegisterUser, name='register'),
     path('quem-somos/', QuemSomosPage, name='quem_somos'),
     
-    # News APP URLs - AGORA INCLUINDO AS URLs DA APLICAÇÃO 'NEWS'
-    # Todas as URLs definidas em news/urls.py serão prefixadas com 'noticias/'
+   
     path('noticias/', include('news.urls')), 
 
-    # Esta URL específica redireciona 'noticia/' (sem mais nada) para a home, 
-    # ou para onde você quiser. Ela pode permanecer aqui fora do include de 'news.urls'
-    # se você quiser que 'noticia/' se comporte de forma diferente de 'noticias/'.
+
     path('noticia/', RedirectToHome), 
     
     # Users APP URLs
@@ -83,6 +80,5 @@ urlpatterns = [
      path('noticias/', include('news.urls')), 
 ]
 
-# Para servir arquivos de mídia (uploads) em ambiente de desenvolvimento (DEBUG=True)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

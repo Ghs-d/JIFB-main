@@ -9,9 +9,9 @@ import markdown
 import os
 
 
-from django.http import JsonResponse # Necessário para o upload de imagens do TinyMCE
-from django.core.files.storage import default_storage # Para gerenciar o salvamento de arquivos
-from django.views.decorators.csrf import csrf_exempt # CUIDADO: Usar com cautela em produção
+from django.http import JsonResponse 
+from django.core.files.storage import default_storage 
+from django.views.decorators.csrf import csrf_exempt 
 import bleach
 
 from .forms import (
@@ -42,7 +42,7 @@ def NoticiaPublicar(request):
             noticia.autor = request.user
 
             if noticia.corpo:
-                # CORRIÇÃO AQUI: Converte frozenset para list antes de concatenar
+                
                 allowed_tags = list(bleach.sanitizer.ALLOWED_TAGS) + [ 
                     'img', 'video', 'source', 'iframe', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                     'p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'blockquote', 'pre', 'code', 'table',
@@ -86,23 +86,21 @@ def NoticiaPublicar(request):
 
 
 
-@csrf_exempt # CUIDADO: Em produção, você DEVE implementar a proteção CSRF corretamente para requisições AJAX
+@csrf_exempt 
 @login_required(login_url='/login')
 def upload_tinymce_image(request):
     if request.method == 'POST' and request.FILES.get('file'):
         img_file = request.FILES['file']
-        # Define o caminho de upload dentro do seu MEDIA_ROOT
-        # Ex: MEDIA_ROOT/uploads/news/editor_images/2025/06/imagem.jpg
+        
         upload_dir = os.path.join('uploads', 'news', 'editor_images', timezone.now().strftime("%Y/%m/%d/"))
         
-        # Garante que o diretório de upload exista
+     
         full_upload_path = os.path.join(settings.MEDIA_ROOT, upload_dir)
         os.makedirs(full_upload_path, exist_ok=True)
 
-        # Salva o arquivo usando o sistema de armazenamento padrão do Django
         file_path_in_media = default_storage.save(os.path.join(upload_dir, img_file.name), img_file)
 
-        # Retorna a URL completa da imagem salva para o TinyMCE
+      
         file_url = request.build_absolute_uri(default_storage.url(file_path_in_media))
         
         return JsonResponse({'location': file_url}) # TinyMCE espera uma resposta JSON com o campo 'location'
@@ -111,32 +109,27 @@ def upload_tinymce_image(request):
 
 
 def NoticiaPage(request, pk):
-    # Se o PK não for numérico, significa que a URL não é para uma notícia individual
-    # E não é mais o 'feed' (pois agora temos uma view dedicada para o feed)
+ 
     if not pk.isnumeric():
-        # Redireciona para o feed (ou renderiza 404, se preferir uma página de erro)
-        # Se um caminho não numérico chegar aqui, algo está errado na URL ou é uma URL antiga.
-        # Uma boa prática seria retornar um 404 aqui: raise Http404("Notícia não encontrada.")
-        # Mas para manter a funcionalidade de redirecionar para o feed, mantemos.
+       
         return redirect('feed') 
-        # Lembre-se de que a URL '/noticias/feed/' agora aponta para FeedNoticiasView.
+   
 
-    # Tenta buscar a notícia pelo ID
     noticia = get_object_or_404(Noticia, id=pk)
     
     arquivos = ArquivoNaNoticia.objects.filter(noticia=noticia)
     comentarios = ComentarioNaNoticia.objects.filter(noticia=noticia).order_by('-data')
 
-    # Verifica permissões de visualização
+  
     if noticia.visivel or (not noticia.visivel and request.user.is_staff):
-        conteudo_html = noticia.corpo # Agora 'corpo' já é o HTML
+        conteudo_html = noticia.corpo 
         perfil = Perfil.objects.get(user=request.user) if request.user.is_authenticated else None
 
         if request.method == 'POST' and request.user.is_authenticated:
             if not perfil.pode_comentar:
                 return HttpResponse('<h1>Você está proibido de comentar</h1>')
 
-            if 'pai' in request.POST and request.POST.get('pai'):  # É resposta
+            if 'pai' in request.POST and request.POST.get('pai'):
                 form = RespostaForm(request.POST)
             else:
                 form = ComentarioForm(request.POST)
@@ -165,48 +158,42 @@ def NoticiaPage(request, pk):
 
         return render(request, "news/noticia_page.html", context)
     else:
-        # Se a notícia não é visível e o usuário não é staff, redireciona ou mostra 404
-        return redirect('feed') # Ou raise Http404("Notícia não encontrada.")
+   
+        return redirect('feed') 
     
     
 def FeedNoticiasView(request):
-    noticias = Noticia.objects.filter(visivel=True).order_by('-updated', '-created') # Apenas notícias visíveis
+    noticias = Noticia.objects.filter(visivel=True).order_by('-updated', '-created')
     perfil = Perfil.objects.get(user=request.user) if request.user.is_authenticated else None
 
     context = {
-        'noticias': noticias, # Renomeei a variável para 'noticias' no contexto
+        'noticias': noticias, 
         'minha_foto_de_perfil': perfil.foto_de_perfil if perfil else None,
         'perfil': perfil,
     }
-    # Renderiza o mesmo template que você já usa para o feed
+   
     return render(request, "news/feed.html", context)
 
-# news/views.py
 
-# ... (suas importações e outras funções)
 
 @login_required(login_url='/login')
 def NoticiaEditar(request, pk):
     noticia = get_object_or_404(Noticia, id=pk)
 
-    # Lógica de permissão: apenas staff OU o autor da notícia pode editar
-    # Ajustei o comentário para refletir essa lógica comum
     if not request.user.is_staff and noticia.autor != request.user:
         return HttpResponse("<h1>Você não tem permissão para editar esta notícia!</h1>")
 
     if request.method == 'POST':
         noticia_form = NoticiaForm(request.POST, request.FILES, instance=noticia)
-        # O ArquivoFormSet gerencia os arquivos existentes e os marcados para exclusão.
-        # Não precisamos de uma query separada aqui antes de validar/salvar.
+     
         arquivos_formset = ArquivoFormSet(request.POST, request.FILES, queryset=ArquivoNaNoticia.objects.filter(noticia=noticia))
 
         if noticia_form.is_valid() and arquivos_formset.is_valid():
             noticia = noticia_form.save(commit=False)
-            noticia.autor = request.user # Garante que o autor permaneça correto
+            noticia.autor = request.user 
 
-            # --- Lógica de Sanitização do HTML do TinyMCE (MUITO IMPORTANTE) ---
             if noticia.corpo:
-                # CORREÇÃO: Converte bleach.sanitizer.ALLOWED_TAGS (frozenset) para list antes de concatenar
+               
                 allowed_tags = list(bleach.sanitizer.ALLOWED_TAGS) + [ 
                     'img', 'video', 'source', 'iframe', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                     'p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'blockquote', 'pre', 'code', 'table',
@@ -260,7 +247,7 @@ def NoticiaEditar(request, pk):
       
         arquivos_formset = ArquivoFormSet(queryset=ArquivoNaNoticia.objects.filter(noticia=noticia))
 
-    # Obtenha a foto de perfil do usuário logado para o contexto
+    
     foto_de_perfil = Perfil.objects.get(user=request.user).foto_de_perfil
 
     context = {
@@ -281,7 +268,7 @@ def NoticiaExcluir(request, pk):
         return HttpResponse("<h1>Somente o autor pode alterar alguma coisa dessa notícia!</h1>")
 
     if request.method == 'POST':
-        # Exclui arquivos relacionados à notícia (seus anexos)
+
         arquivos = ArquivoNaNoticia.objects.filter(noticia=noticia.id)
         for arquivo in arquivos:
             try:
