@@ -20,18 +20,10 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 
-# Importe a função 'include' aqui
+
 from django.urls import path, include 
 
-# REMOVA estas importações diretas das views da aplicação 'news',
-# pois agora elas serão incluídas através do news/urls.py
-# from news.views import (
-#     NoticiaPublicar, 
-#     NoticiaEditar, 
-#     NoticiaExcluir, 
-#     NoticiaPage, 
-#     Procurar,
-# )
+
 
 from users.views import (
     UserProfile,

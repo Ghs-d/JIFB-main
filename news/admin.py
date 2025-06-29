@@ -1,12 +1,12 @@
 # news/admin.py
 
 from django.contrib import admin
-from .models import Noticia, ArquivoNaNoticia, ComentarioNaNoticia # Importa os modelos específicos
-from django import forms # Importa forms para personalizar widgets
+from .models import Noticia, ArquivoNaNoticia, ComentarioNaNoticia 
+from django import forms 
 
 # Classe que personaliza o admin para o modelo Noticia
 class NoticiaAdmin(admin.ModelAdmin):
-    # Campos que serão exibidos na lista de notícias no painel Admin
+ 
     list_display = ('título', 'autor', 'visivel', 'created', 'updated')
     
     list_filter = ('visivel', 'autor', 'created')
@@ -14,7 +14,7 @@ class NoticiaAdmin(admin.ModelAdmin):
     
     search_fields = ('título', 'corpo', 'tags') 
 
-    # Este método é usado para personalizar os widgets dos campos do modelo no Admin
+  
     def formfield_for_dbfield(self, db_field, **kwargs):
        
         if db_field.name == 'corpo':
@@ -24,5 +24,3 @@ class NoticiaAdmin(admin.ModelAdmin):
         return super().formfield_for_dbfield(db_field, **kwargs)
 
 
-# admin.site.register(ArquivoNaNoticia)
-# admin.site.register(ComentarioNaNoticia)

@@ -5,50 +5,13 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'CSS/news/editar.css' %}" />
-    <style>
-        
-        .form-container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 30px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .form-container label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
-        .form-container input[type="text"],
-        .form-container textarea,
-        .form-container input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .arquivo-box {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-        .arquivo-box label {
-            display: inline-block; 
-            margin-left: 5px;
-            font-weight: normal;
-        }
-        
-    </style>
+    
 {% endblock %}
 
 
 {% block content %}
 <div class="form-container">
-    <h2 class="mb-4">Editar Notícia: {{ noticia.título }}</h2> {# Título da página de edição #}
+    <h2 class="mb-4">Editar Notícia: {{ noticia.título }}</h2> 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         
@@ -74,7 +37,7 @@
 
         <div class="mb-3">
             <label for="id_corpo" class="form-label">Conteúdo do Artigo:</label>
-            {{ noticia_form.corpo }} {# Este será o textarea que o TinyMCE vai transformar #}
+            {{ noticia_form.corpo }} 
         </div>
 
         <div class="mb-3 form-check">
@@ -87,19 +50,19 @@
         {% for form in arquivos_formset %}
         <div class="arquivo-box">
             {{ form.id }} {# Campo oculto para o ID do arquivo #}
-            {% if form.instance.arquivos %} {# Verifica se o arquivo existe para exibir o link #}
+            {% if form.instance.arquivos %} 
                 <p>Arquivo: <a href="{{ form.instance.arquivos.url }}" target="_blank">{{ form.instance.arquivos.name }}</a></p>
             {% else %}
                 <p>Nenhum arquivo.</p>
             {% endif %}
             
-            {# CORRIGIDO: Removido form.nome (não existe no modelo ArquivoNaNoticia) #}
+           
             {# {{ form.nome.label_tag }} {{ form.nome }} #} 
             
             <label class="form-check-label">
                 {{ form.DELETE }} Excluir
             </label>
-            {# O campo de upload de arquivo individual do formset, se você quiser permitir substituição #}
+            
             {{ form.arquivos }} 
         </div>
         {% endfor %}
@@ -114,7 +77,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
-{# ADICIONADO: CÓDIGO DO TINYMCE PARA A PÁGINA DE EDIÇÃO #}
 <script src="https://cdn.tiny.cloud/1/wpcpuog85xxy8xjnv0kvo6qhkobmap9tndqouk5hhs2luppk/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
     tinymce.init({

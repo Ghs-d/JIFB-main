@@ -110,4 +110,63 @@
   }
   
   
-  
+  .meus-artigos-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .meus-artigos-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .artigo-item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+            gap: 20px;
+        }
+        .artigo-item:last-child {
+            border-bottom: none;
+        }
+        .artigo-item-info {
+            flex-grow: 1;
+        }
+        .artigo-item-info h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 20px;
+            color: #555;
+        }
+        .artigo-item-info p {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+        .artigo-item-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0; 
+        }
+        .artigo-item-thumb {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        @media (max-width: 768px) {
+            .artigo-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .artigo-item-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
